@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Fale Conosco - Hamburgueria 2.0">
+    <title>Contato - Hamburgueria 2.0</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700&family=Playfair+Display:ital,wght@0,700;1,700&display=swap"
+        rel="stylesheet">
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Styles -->
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <style>
+        .contact-form-section {
+            max-width: 600px;
+            margin: 4rem auto 0;
+            background: var(--card-bg);
+            padding: 2.5rem;
+            border-radius: var(--border-radius);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .contact-form-section h3 {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: var(--primary);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <header class="header">
+            <nav class="navbar">
+                <div class="logo">
+                    <a href="index.html" style="text-decoration:none;">
+                        <h1>Burger<span class="highlight">2.0</span></h1>
+                    </a>
+                </div>
+                <ul class="nav-links">
+                    <li><a href="index.html">Início</a></li>
+                    <li><a href="menu.html">Cardápio</a></li>
+                    <li><a href="about.html">Sobre</a></li>
+                    <li><a href="contact.html" class="active">Contato</a></li>
+                </ul>
+                <div class="auth-buttons" style="display: flex; align-items: center; gap: 15px;">
+                    <a href="login.html" id="login-btn" class="btn-text" style="text-decoration:none;">Entrar</a>
+                    <span id="user-display" class="user-display" style="display: none; color: var(--primary);"></span>
+                    <a href="orders.html" id="my-orders-btn" class="btn-text"
+                        style="display: none; font-size: 0.9rem; text-decoration: none;"><i
+                            class="fa-solid fa-receipt"></i> Meus Pedidos</a>
+                    <button id="logout-btn" class="btn-text" style="display: none;"><i
+                            class="fa-solid fa-right-from-bracket"></i></button>
+                    <!-- Cart Indicator in Header for Desktop -->
+                    <div id="header-cart-indicator"
+                        style="color: var(--primary); font-weight: bold; margin-left:10px; display:none;">
+                        <i class="fa-solid fa-cart-shopping"></i> <span id="header-cart-count">0</span>
+                    </div>
+                </div>
+            </nav>
+        </header>
+
+        <main style="padding-top: 80px;">
+            <section class="section contact-section">
+                <div class="container">
+                    <div class="section-header">
+                        <h3>Fale Conosco</h3>
+                        <p>Estamos prontos para atender você.</p>
+                    </div>
+
+                    <div class="contact-grid">
+                        <div class="contact-card">
+                            <i class="fa-solid fa-location-dot"></i>
+                            <h4>Endereço</h4>
+                            <p>Rua do Sabor, 123 - Centro</p>
+                        </div>
+                        <div class="contact-card">
+                            <i class="fa-brands fa-whatsapp"></i>
+                            <h4>Delivery</h4>
+                            <p>(11) 99999-9999</p>
+                            <div style="display: flex; flex-direction: column; gap: 0.5rem; margin-top: 1rem;">
+                                <a href="#" class="btn-text">Chamar no Whats</a>
+                                <a href="https://www.ifood.com.br" target="_blank" class="btn-text"
+                                    style="color: #EA1D2C;">Pedir no iFood</a>
+                            </div>
+                        </div>
+                        <div class="contact-card">
+                            <i class="fa-regular fa-clock"></i>
+                            <h4>Horários</h4>
+                            <p>Ter a Dom: 18h às 23h</p>
+                        </div>
+                    </div>
+
+                    <!-- Contact Form -->
+                    <div class="contact-form-section">
+                        <h3>Envie uma Mensagem</h3>
+                        <form onsubmit="event.preventDefault(); alert('Mensagem enviada com sucesso! (Demo)');">
+                            <div class="form-row">
+                                <div class="input-group">
+                                    <i class="fa-solid fa-user"></i>
+                                    <input type="text" placeholder="Seu Nome" required>
+                                </div>
+                                <div class="input-group">
+                                    <i class="fa-solid fa-phone"></i>
+                                    <input type="tel" placeholder="Seu Telefone">
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <i class="fa-solid fa-envelope"></i>
+                                <input type="email" placeholder="Seu E-mail" required>
+                            </div>
+                            <div class="input-group" style="align-items: flex-start;">
+                                <i class="fa-solid fa-comment" style="margin-top: 8px;"></i>
+                                <textarea placeholder="Sua Mensagem..." rows="4"
+                                    style="width: 100%; background: none; border: none; color: #fff; outline: none; resize: none; font-family: inherit; font-size: 1rem;"></textarea>
+                            </div>
+                            <button type="submit" class="btn-primary full-width">Enviar Mensagem</button>
+                        </form>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>&copy; 2024 Hamburgueria 2.0. Todos os direitos reservados.</p>
+        </footer>
+
+        <!-- Cart Modal -->
+        <div id="cart-modal" class="cart-overlay">
+            <div class="cart-container">
+                <div class="cart-header">
+                    <h3>Seu Pedido</h3>
+                    <button id="close-cart-btn"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <div class="cart-items" id="cart-items">
+                    <!-- Items will be injected here via JS -->
+                    <p class="empty-cart-msg">Seu carrinho está vazio.</p>
+                </div>
+                <div class="cart-footer">
+                    <div class="cart-total">
+                        <span>Total:</span>
+                        <span id="cart-total-price">R$ 0,00</span>
+                    </div>
+                    <button id="checkout-btn" class="btn-primary">Finalizar no WhatsApp <i
+                            class="fa-brands fa-whatsapp"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Float Button for Cart -->
+        <button id="cart-btn" class="cart-float-btn">
+            <i class="fa-solid fa-bag-shopping"></i>
+            <span id="cart-count" class="cart-count">0</span>
+        </button>
+
+        <!-- Auth Modal -->
+        <div id="auth-modal" class="auth-overlay">
+            <div class="auth-container">
+                <button id="close-auth-btn" class="close-modal-btn"><i class="fa-solid fa-xmark"></i></button>
+
+                <!-- Login Form -->
+                <div id="login-form" class="auth-form active">
+                    <h3>Bem-vindo de volta!</h3>
+                    <p>Faça login para continuar.</p>
+                    <form onsubmit="event.preventDefault(); window.handleLogin();">
+                        <div class="input-group">
+                            <i class="fa-solid fa-envelope"></i>
+                            <input type="email" id="login-email" placeholder="Seu e-mail" required>
+                        </div>
+                        <div class="input-group">
+                            <i class="fa-solid fa-lock"></i>
+                            <input type="password" id="login-password" placeholder="Sua senha" required>
+                        </div>
+                        <button type="submit" class="btn-primary full-width">Entrar</button>
+                    </form>
+                    <p class="auth-switch">
+                        Não tem conta? <a href="#" id="switch-to-register">Cadastre-se</a>
+                    </p>
+                </div>
+
+                <!-- Register Form -->
+                <div id="register-form" class="auth-form">
+                    <h3>Crie sua conta</h3>
+                    <p>Junte-se a nós para ofertas exclusivas.</p>
+                    <form onsubmit="event.preventDefault(); window.handleRegister();">
+                        <div class="input-group">
+                            <i class="fa-solid fa-user"></i>
+                            <input type="text" id="register-name" placeholder="Seu nome completo" required>
+                        </div>
+                        <div class="input-group">
+                            <i class="fa-solid fa-envelope"></i>
+                            <input type="email" id="register-email" placeholder="Seu melhor e-mail" required>
+                        </div>
+                        <div class="input-group">
+                            <i class="fa-solid fa-lock"></i>
+                            <input type="password" id="register-password" placeholder="Uma senha segura" required>
+                        </div>
+                        <button type="submit" class="btn-primary full-width">Cadastrar</button>
+                    </form>
+                    <p class="auth-switch">
+                        Já tem conta? <a href="#" id="switch-to-login">Entrar</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="assets/js/script.js"></script>
+</body>
+
+</html>

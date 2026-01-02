@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Hamburgueria 2.0</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700&family=Playfair+Display:ital,wght@0,700;1,700&display=swap"
+        rel="stylesheet">
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Styles -->
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <style>
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 250px;
+            background: rgba(18, 18, 20, 0.9);
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar h2 {
+            margin-bottom: 2rem;
+            font-size: 1.5rem;
+        }
+
+        .sidebar a {
+            color: var(--text-muted);
+            text-decoration: none;
+            padding: 1rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            transition: color 0.3s;
+        }
+
+        .sidebar a:hover,
+        .sidebar a.active {
+            color: var(--primary);
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .stat-icon {
+            font-size: 2rem;
+            color: var(--primary);
+        }
+
+        .status-badge {
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .status-pending {
+            background: rgba(251, 133, 0, 0.2);
+            color: var(--primary);
+        }
+
+        .status-completed {
+            background: rgba(0, 255, 127, 0.2);
+            color: #00ff7f;
+        }
+
+        .status-cancelled {
+            background: rgba(255, 69, 58, 0.2);
+            color: #ff453a;
+        }
+
+        .btn-action {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: color 0.3s;
+            margin-right: 0.8rem;
+        }
+
+        .btn-action:hover {
+            color: var(--light);
+        }
+
+        .stat-info h4 {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .stat-info .value {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .orders-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+        }
+
+        .orders-table th,
+        .orders-table td {
+            text-align: left;
+            padding: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .orders-table th {
+            background: rgba(255, 255, 255, 0.05);
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+            }
+        }
+
+        /* Fix Dropdown Visibility */
+        select option {
+            background: #121214;
+            color: white;
+        }
+
+        /* Modal Default Style */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.open {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            min-width: 300px;
+            animation: slideUp 0.3s ease;
+            position: relative;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            color: var(--danger, #ff453a);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <aside class="sidebar">
+            <h2>Burger<span class="highlight">2.0</span> Admin</h2>
+            <a href="#" onclick="switchView('dashboard')" class="active"><i class="fa-solid fa-chart-line"></i> Visão
+                Geral</a>
+            <a href="#" onclick="switchView('orders')"><i class="fa-solid fa-list"></i> Pedidos</a>
+            <a href="#" onclick="switchView('products')"><i class="fa-solid fa-box"></i> Produtos</a>
+            <a href="#" onclick="logout()" style="margin-top: auto; border: none;"><i
+                    class="fa-solid fa-right-from-bracket"></i> Sair</a>
+        </aside>
+
+        <main class="main-content">
+            <!-- VIEW: OVERVIEW -->
+            <div id="view-dashboard" class="dashboard-view active">
+                <header style="margin-bottom: 2rem;">
+                    <h3>Dashboard de Vendas</h3>
+                    <p>Bem-vindo, Admin.</p>
+                </header>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fa-solid fa-cart-shopping"></i></div>
+                        <div class="stat-info">
+                            <h4>Total de Vendas</h4>
+                            <div class="value" id="total-sales">0</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fa-solid fa-dollar-sign"></i></div>
+                        <div class="stat-info">
+                            <h4>Faturamento</h4>
+                            <div class="value" id="total-revenue">R$ 0,00</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fa-solid fa-users"></i></div>
+                        <div class="stat-info">
+                            <h4>Clientes</h4>
+                            <div class="value" id="total-customers">0</div>
+                        </div>
+                    </div>
+                </div>
+
+                <section>
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                        <h4 style="margin: 0;">Pedidos Recentes</h4>
+                        <button onclick="clearAllOrders()"
+                            style="background: var(--danger); color: white; border: none; padding: 0.4rem 0.8rem; border-radius: 4px; cursor: pointer; font-size: 0.8rem;">
+                            <i class="fa-solid fa-trash"></i> Limpar Tudo
+                        </button>
+                    </div>
+                    <div style="overflow-x: auto;">
+                        <table class="orders-table">
+                            <thead>
+                                <tr>
+                                    <th>#ID</th>
+                                    <th>Data</th>
+                                    <th>Cliente</th>
+                                    <th>Total</th>
+                                    <th>Status</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recent-orders-body">
+                                <!-- Rows injected via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
+
+            <!-- VIEW: ORDERS (Full List) -->
+            <div id="view-orders" class="dashboard-view" style="display: none;">
+                <header
+                    style="margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <h3>Gestão de Pedidos</h3>
+                        <p>Todos os pedidos realizados.</p>
+                    </div>
+                    <button onclick="clearAllOrders()"
+                        style="background: var(--danger); color: white; border: none; padding: 0.5rem 1rem; border-radius: 4px; cursor: pointer;">
+                        <i class="fa-solid fa-trash"></i> Excluir Histórico
+                    </button>
+                </header>
+                <div style="overflow-x: auto;">
+                    <table class="orders-table">
+                        <thead>
+                            <tr>
+                                <th>#ID</th>
+                                <th>Data</th>
+                                <th>Cliente</th>
+                                <th>Total</th>
+                                <th>Status</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="all-orders-body">
+                            <!-- Rows injected via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- VIEW: PRODUCTS -->
+            <div id="view-products" class="dashboard-view" style="display: none;">
+                <header
+                    style="margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <h3>Meus Produtos</h3>
+                        <p>Gerencie o cardápio da loja.</p>
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <button onclick="resetProductsToDefault()"
+                            style="background-color: var(--danger); color: white; border: none; border-radius: 8px; padding: 0.5rem 1rem; cursor: pointer;">
+                            <i class="fa-solid fa-rotate-right"></i> Resetar
+                        </button>
+                        <button class="btn-primary" onclick="openProductModal()"><i class="fa-solid fa-plus"></i> Novo
+                            Produto</button>
+                    </div>
+                </header>
+
+                <div style="overflow-x: auto;">
+                    <table class="orders-table">
+                        <thead>
+                            <tr>
+                                <th>Imagem</th>
+                                <th>Nome</th>
+                                <th>Categoria</th>
+                                <th>Preço</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="products-body">
+                            <!-- Rows injected -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Order Details Modal -->
+    <div id="order-modal" class="auth-overlay">
+        <div class="auth-container" style="max-width: 600px;">
+            <button id="close-order-btn" class="close-modal-btn" onclick="closeOrderModal()"><i
+                    class="fa-solid fa-xmark"></i></button>
+            <div class="auth-form active" style="text-align: left;">
+                <h3 style="margin-bottom: 1rem;">Detalhes do Pedido <span id="modal-order-id"
+                        style="color: var(--primary);">#</span></h3>
+
+                <div
+                    style="margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                    <p><strong>Cliente:</strong> <span id="modal-customer"></span></p>
+                    <p><strong>Data:</strong> <span id="modal-date"></span></p>
+                    <p><strong>Status:</strong> <span id="modal-status"></span></p>
+                </div>
+
+                <h4 style="margin-bottom: 0.5rem; color: var(--primary);">Itens</h4>
+                <div id="modal-items" style="margin-bottom: 1.5rem; max-height: 200px; overflow-y: auto;">
+                    <!-- Items injected -->
+                </div>
+
+                <div
+                    style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 1rem; display: flex; justify-content: space-between; font-size: 1.2rem; font-weight: bold;">
+                    <span>Total:</span>
+                    <span id="modal-total">R$ 0,00</span>
+                </div>
+
+                <div style="margin-top: 2rem; display: flex; gap: 1rem;">
+                    <button class="btn-primary full-width" onclick="updateOrderStatus('completed')">Marcar como
+                        Entregue</button>
+                    <button class="btn-text full-width" style="border: 1px solid rgba(255,255,255,0.1);"
+                        onclick="updateOrderStatus('cancelled')">Cancelar Pedido</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Product Modal -->
+    <div id="product-modal" class="auth-overlay">
+        <div class="auth-container" style="max-width: 600px;">
+            <button id="close-product-btn" class="close-modal-btn" onclick="closeProductModal()"><i
+                    class="fa-solid fa-xmark"></i></button>
+            <div class="auth-form active" style="text-align: left;">
+                <h3 id="product-modal-title" style="margin-bottom: 1.5rem;">Novo Produto</h3>
+
+                <form onsubmit="event.preventDefault(); saveProduct();">
+                    <input type="hidden" id="prod-id">
+                    <div class="form-group" style="margin-bottom: 1rem;">
+                        <label style="display:block; margin-bottom:0.5rem; color:#ccc;">Nome do Produto</label>
+                        <input type="text" id="prod-name" class="form-control" required
+                            style="width:100%; padding:0.8rem; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); color:white; border-radius:8px;">
+                    </div>
+                    <div class="form-group" style="margin-bottom: 1rem;">
+                        <label style="display:block; margin-bottom:0.5rem; color:#ccc;">Descrição</label>
+                        <input type="text" id="prod-desc" class="form-control" required
+                            style="width:100%; padding:0.8rem; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); color:white; border-radius:8px;">
+                    </div>
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1rem;">
+                        <div class="form-group" style="margin-bottom: 1rem;">
+                            <label style="display:block; margin-bottom:0.5rem; color:#ccc;">Preço (R$)</label>
+                            <input type="number" step="0.01" id="prod-price" class="form-control" required
+                                style="width:100%; padding:0.8rem; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); color:white; border-radius:8px;">
+                        </div>
+                        <div class="form-group" style="margin-bottom: 1rem;">
+                            <label style="display:block; margin-bottom:0.5rem; color:#ccc;">Categoria</label>
+                            <select id="prod-cat" class="form-control"
+                                style="width:100%; padding:0.8rem; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); color:white; border-radius:8px;">
+                                <option value="burgers">Burgers</option>
+                                <option value="sides">Acompanhamentos</option>
+                                <option value="drinks">Bebidas</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 1.5rem;">
+                        <label style="display:block; margin-bottom:0.5rem; color:#ccc;">URL da Imagem</label>
+                        <input type="text" id="prod-img" class="form-control" placeholder="https://..."
+                            style="width:100%; padding:0.8rem; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); color:white; border-radius:8px;">
+                        <!-- Or Upload Placeholder -->
+                    </div>
+
+                    <button type="submit" class="btn-primary full-width">Salvar Produto</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/js/script.js"></script>
+    <!-- Address Modal -->
+    <div id="address-modal" class="modal">
+        <div class="modal-content" style="max-width: 400px; text-align: center;">
+            <div class="modal-header">
+                <h3>Localização de Entrega</h3>
+                <button class="close-modal" onclick="closeAddressModal()"><i class="fa-solid fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <div style="font-size: 3rem; color: var(--primary); margin-bottom: 1rem;">
+                    <i class="fa-solid fa-map-location-dot"></i>
+                </div>
+                <h4 id="modal-address-name" style="margin-bottom: 0.5rem; color: var(--text-main);">Cliente</h4>
+                <p id="modal-address-text" style="color: var(--text-muted); font-size: 1.1rem; margin-bottom: 2rem;">
+                    Endereço...
+                </p>
+
+                <button id="btn-open-map" class="btn-primary" style="width: 100%;">
+                    <i class="fa-brands fa-google"></i> Abrir no Google Maps
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Generic Alert/Confirm Modal -->
+    <div id="alert-modal" class="modal">
+        <div class="modal-content" style="max-width: 350px; text-align: center; padding: 2rem;">
+            <div class="alert-icon" style="font-size: 3rem; margin-bottom: 1rem;"></div>
+            <h3 style="margin-bottom: 0.5rem; color: var(--text-main);">Alerta</h3>
+            <p style="color: var(--text-muted); margin-bottom: 2rem; font-size: 1.1rem;"></p>
+
+            <div style="display: flex; gap: 1rem; justify-content: center;">
+                <button id="btn-alert-cancel" class="btn-text" onclick="closeAlertModal()"
+                    style="display: none; color: #ff453a;">Cancelar</button>
+                <button id="btn-alert-confirm" class="btn-primary" style="min-width: 100px;">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Check Admin Role
+        const user = JSON.parse(localStorage.getItem('user'));
+        if (!user || user.role !== 'seller') {
+            alert("Acesso negado!");
+            window.location.href = "index.html";
+        }
+
+        let currentOrders = [];
+        let currentProducts = [];
+        let selectedOrderId = null;
+
+        // Init
+        document.addEventListener('DOMContentLoaded', () => {
+            refreshDashboard();
+            loadProducts();
+            switchView('dashboard'); // Default
+        });
+
+        // Navigation
+        function switchView(viewName) {
+            document.querySelectorAll('.dashboard-view').forEach(el => el.style.display = 'none');
+            document.querySelectorAll('.sidebar a').forEach(el => el.classList.remove('active'));
+
+            // Activate View
+            document.getElementById(`view-${viewName}`).style.display = 'block';
+
+            // Activate Menu Item
+            const linkMap = { 'dashboard': 0, 'orders': 1, 'products': 2 };
+            const index = linkMap[viewName];
+            if (index !== undefined) document.querySelectorAll('.sidebar a')[index].classList.add('active');
+
+            if (viewName === 'orders') renderAllOrders();
+        }
+
+        function refreshDashboard() {
+            const allOrders = JSON.parse(localStorage.getItem('orders')) || [];
+            // Filter out orders deleted by admin (Soft Delete)
+            currentOrders = allOrders.filter(o => !o.deletedByAdmin);
+
+            // Stats based on visible orders
+            document.getElementById('total-sales').textContent = currentOrders.length;
+            const revenue = currentOrders.reduce((acc, order) => acc + order.total, 0);
+            document.getElementById('total-revenue').textContent = `R$ ${revenue.toFixed(2).replace('.', ',')}`;
+            const customers = new Set(currentOrders.map(o => o.customer ? (o.customer.email || o.customer) : 'unknown'));
+            document.getElementById('total-customers').textContent = customers.size;
+
+            // Recent Orders Table
+            renderTable(currentOrders.slice(-5).reverse(), 'recent-orders-body');
+        }
+
+        function renderAllOrders() {
+            const allOrders = JSON.parse(localStorage.getItem('orders')) || [];
+            // Show only orders not deleted by admin
+            const visibleOrders = allOrders.filter(o => !o.deletedByAdmin);
+            renderTable(visibleOrders.slice().reverse(), 'all-orders-body');
+        }
+
+        function renderTable(ordersList, tbodyId) {
+            const tbody = document.getElementById(tbodyId);
+            if (!tbody) return;
+            tbody.innerHTML = '';
+
+            ordersList.forEach(order => {
+                const statusClass = order.status === 'Entregue' ? 'status-completed' : (order.status === 'Cancelado' ?
+                    'status-cancelled' : 'status-pending');
+                const statusLabel = order.status || 'Pendente';
+
+                // Safe Customer Name
+                let customerName = 'Não Identificado';
+                if (order.customer) {
+                    if (typeof order.customer === 'string') customerName = order.customer;
+                    else if (order.customer.name) customerName = order.customer.name;
+                }
+
+                // Date Formatting PT-BR
+                const dateObj = new Date(order.date);
+                const dateStr = dateObj.toLocaleDateString('pt-BR');
+
+                const row = document.createElement('tr');
+                row.innerHTML = `
+    <td>#${order.id.toString().slice(-6)}</td>
+    <td>${dateStr}</td>
+    <td>${customerName}</td>
+    <td>R$ ${order.total.toFixed(2).replace('.', ',')}</td>
+    <td><span class="status-badge ${statusClass}">${statusLabel}</span></td>
+    <td>
+        <button class="btn-action" onclick="viewOrder('${order.id}')" title="Ver Detalhes"><i
+                class="fa-solid fa-eye"></i></button>
+        <button class="btn-action" onclick="viewAddress('${order.id}')" title="Ver Localização"
+            style="color: var(--primary);"><i class="fa-solid fa-map-location-dot"></i></button>
+        <button class="btn-action" onclick="deleteOrder('${order.id}')" title="Excluir Pedido"
+            style="color: var(--danger);"><i class="fa-solid fa-trash"></i></button>
+    </td>
+    `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // --- PRODUCTS CRUD ---
+
+        function loadProducts() {
+            // Using script.js logic (localStorage 'products')
+            currentProducts = JSON.parse(localStorage.getItem('products')) || [];
+            renderProductsTable();
+        }
+
+        function renderProductsTable() {
+            const tbody = document.getElementById('products-body');
+            tbody.innerHTML = '';
+
+            currentProducts.forEach(prod => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+    <td><img src="${prod.image}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px;"></td>
+    <td>${prod.name}</td>
+    <td>${prod.category === 'burgers' ? 'Hambúrguer' : (prod.category === 'drinks' ? 'Bebida' : 'Acomp.')}</td>
+    <td>R$ ${prod.price.toFixed(2).replace('.', ',')}</td>
+    <td>
+        <button class="btn-action" onclick="editProduct(${prod.id})"><i class="fa-solid fa-pen"></i></button>
+        <button class="btn-action" style="color: #ff453a;" onclick="deleteProduct(${prod.id})"><i
+                class="fa-solid fa-trash"></i></button>
+    </td>
+    `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function openProductModal() {
+            document.getElementById('prod-id').value = '';
+            document.getElementById('prod-name').value = '';
+            document.getElementById('prod-desc').value = '';
+            document.getElementById('prod-price').value = '';
+            document.getElementById('prod-img').value = '';
+            document.getElementById('product-modal-title').textContent = "Novo Produto";
+            document.getElementById('product-modal').classList.add('open');
+        }
+
+        function closeProductModal() {
+            document.getElementById('product-modal').classList.remove('open');
+        }
+
+        function editProduct(id) {
+            const prod = currentProducts.find(p => p.id === id);
+            if (!prod) return;
+
+            document.getElementById('prod-id').value = prod.id;
+            document.getElementById('prod-name').value = prod.name;
+            document.getElementById('prod-desc').value = prod.description;
+            document.getElementById('prod-price').value = prod.price;
+            document.getElementById('prod-cat').value = prod.category;
+            document.getElementById('prod-img').value = prod.image;
+
+            document.getElementById('product-modal-title').textContent = "Editar Produto";
+            document.getElementById('product-modal').classList.add('open');
+        }
+
+        function saveProduct() {
+            const id = document.getElementById('prod-id').value;
+            const name = document.getElementById('prod-name').value;
+            const desc = document.getElementById('prod-desc').value;
+            const price = parseFloat(document.getElementById('prod-price').value);
+            const cat = document.getElementById('prod-cat').value;
+            const img = document.getElementById('prod-img').value || 'assets/img/burger_default.png';
+
+            if (id) {
+                // Edit
+                const index = currentProducts.findIndex(p => p.id == id);
+                if (index > -1) {
+                    currentProducts[index] = { ...currentProducts[index], name, description: desc, price, category: cat, image: img };
+                }
+            } else {
+                // Create
+                const newId = Date.now(); // Simple ID
+                currentProducts.push({ id: newId, name, description: desc, price, category: cat, image: img });
+            }
+
+            localStorage.setItem('products', JSON.stringify(currentProducts));
+            loadProducts();
+            closeProductModal();
+            showCustomAlert("Produto salvo com sucesso!", 'success');
+        }
+
+        function resetProductsToDefault() {
+            if (confirm("Isso apagará todos os produtos personalizados e restaurará os padrões do sistema. Continuar?")) {
+                localStorage.setItem('products', JSON.stringify(defaultMenuItems));
+                location.reload();
+            }
+        }
+
+        function deleteProduct(id) {
+            showCustomConfirm("Tem certeza que deseja excluir este produto?", () => {
+                currentProducts = currentProducts.filter(p => p.id !== id);
+                localStorage.setItem('products', JSON.stringify(currentProducts));
+                loadProducts();
+                showCustomAlert("Produto excluído!", 'success');
+            });
+        }
+
+        // ... (View Order Functions existing below)
+
+
+        function viewOrder(id) {
+            const order = currentOrders.find(o => o.id == id);
+            if (!order) return;
+
+            selectedOrderId = id;
+
+            document.getElementById('modal-order-id').textContent = '#' + order.id.toString().slice(-6);
+            document.getElementById('modal-customer').textContent = order.customer.name;
+            document.getElementById('modal-date').textContent = new Date(order.date).toLocaleString();
+            document.getElementById('modal-status').textContent = order.status || 'Pendente';
+            document.getElementById('modal-total').textContent = `R$ ${order.total.toFixed(2).replace('.', ',')}`;
+
+            const itemsContainer = document.getElementById('modal-items');
+            itemsContainer.innerHTML = '';
+            order.items.forEach(item => {
+                itemsContainer.innerHTML += `
+    <div
+        style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 0.9rem; color: var(--text-muted);">
+        <span>${item.quantity}x ${item.name}</span>
+        <span>R$ ${(item.price * item.quantity).toFixed(2).replace('.', ',')}</span>
+    </div>
+    `;
+            });
+
+            document.getElementById('order-modal').classList.add('open');
+        }
+
+        function closeOrderModal() {
+            document.getElementById('order-modal').classList.remove('open');
+            selectedOrderId = null;
+        }
+
+        function updateOrderStatus(status) {
+            if (!selectedOrderId) return;
+
+            const orders = JSON.parse(localStorage.getItem('orders')) || [];
+            const index = orders.findIndex(o => o.id === selectedOrderId);
+
+            if (index > -1) {
+                orders[index].status = status === 'completed' ? 'Entregue' : 'Cancelado';
+                localStorage.setItem('orders', JSON.stringify(orders));
+                refreshDashboard();
+                renderAllOrders(); // Also refresh the full list
+                closeOrderModal();
+                showCustomAlert(`Pedido marcado como ${orders[index].status}!`, 'success');
+            }
+        }
+
+        function viewAddress(id) {
+            const order = currentOrders.find(o => o.id == id);
+            if (!order) return;
+
+            // Fallback for address
+            let address = "Endereço não informado";
+            if (order.address) {
+                if (typeof order.address === 'string') address = order.address;
+                else {
+                    address = `${order.address.street || ''}, ${order.address.number || ''} - ${order.address.neighborhood || ''}`;
+                }
+            }
+
+            // Populate Modal
+            document.getElementById('modal-address-text').textContent = address;
+            document.getElementById('modal-address-name').textContent = order.customer.name || 'Cliente';
+
+            // Configure Map Button
+            const mapBtn = document.getElementById('btn-open-map');
+            const query = encodeURIComponent(address + ", Brazil");
+            mapBtn.onclick = () => window.open(`https://www.google.com/maps/search/?api=1&query=${query}`, '_blank');
+
+            document.getElementById('address-modal').classList.add('open');
+        }
+
+        function closeAddressModal() {
+            document.getElementById('address-modal').classList.remove('open');
+        }
+
+        // --- Custom Alert/Confirm Logic ---
+        function showCustomAlert(message, type = 'success') {
+            const modal = document.getElementById('alert-modal');
+            const icon = modal.querySelector('.alert-icon');
+            const title = modal.querySelector('h3');
+            const msg = modal.querySelector('p');
+            const confirmBtn = document.getElementById('btn-alert-confirm');
+            const cancelBtn = document.getElementById('btn-alert-cancel');
+
+            // Reset
+            cancelBtn.style.display = 'none';
+            confirmBtn.onclick = () => closeAlertModal();
+            confirmBtn.textContent = "OK";
+
+            // Content
+            msg.textContent = message;
+
+            if (type === 'success') {
+                icon.innerHTML = '<i class="fa-solid fa-check-circle"></i>';
+                icon.style.color = 'var(--success)';
+                title.textContent = "Sucesso";
+            } else if (type === 'error') {
+                icon.innerHTML = '<i class="fa-solid fa-circle-exclamation"></i>';
+                icon.style.color = '#ff453a';
+                title.textContent = "Erro";
+            } else {
+                icon.innerHTML = '<i class="fa-solid fa-info-circle"></i>';
+                icon.style.color = 'var(--primary)';
+                title.textContent = "Aviso";
+            }
+
+            modal.classList.add('open');
+        }
+
+        let confirmCallback = null;
+        function showCustomConfirm(message, callback) {
+            const modal = document.getElementById('alert-modal');
+            const icon = modal.querySelector('.alert-icon');
+            const title = modal.querySelector('h3');
+            const msg = modal.querySelector('p');
+            const confirmBtn = document.getElementById('btn-alert-confirm');
+            const cancelBtn = document.getElementById('btn-alert-cancel');
+
+            // Setup
+            cancelBtn.style.display = 'inline-block';
+            confirmCallback = callback;
+
+            confirmBtn.textContent = "Confirmar";
+            confirmBtn.onclick = () => {
+                if (confirmCallback) confirmCallback();
+                closeAlertModal();
+            };
+
+            // Content
+            msg.textContent = message;
+            icon.innerHTML = '<i class="fa-solid fa-question-circle"></i>';
+            icon.style.color = 'var(--primary)';
+            title.textContent = "Confirmação";
+
+            modal.classList.add('open');
+        }
+
+        function closeAlertModal() {
+            document.getElementById('alert-modal').classList.remove('open');
+            confirmCallback = null;
+        }
+
+        function clearAllOrders() {
+            showCustomConfirm("Limpar o painel? Os pedidos continuarão visíveis para os clientes.", () => {
+                let allOrders = JSON.parse(localStorage.getItem('orders')) || [];
+                // Soft Delete: Mark all as deletedByAdmin
+                allOrders.forEach(o => o.deletedByAdmin = true);
+
+                localStorage.setItem('orders', JSON.stringify(allOrders));
+                refreshDashboard();
+                renderAllOrders();
+                showCustomAlert("Painel limpo! O histórico dos clientes foi preservado.", 'success');
+            });
+        }
+
+        function deleteOrder(id) {
+            showCustomConfirm("Tem certeza que deseja excluir este pedido do painel?", () => {
+                let allOrders = JSON.parse(localStorage.getItem('orders')) || [];
+                const index = allOrders.findIndex(o => o.id == id);
+
+                if (index > -1) {
+                    // Soft Delete
+                    allOrders[index].deletedByAdmin = true;
+                    localStorage.setItem('orders', JSON.stringify(allOrders));
+
+                    refreshDashboard();
+                    renderAllOrders();
+                    showCustomAlert("Pedido removido do painel.", 'success');
+                }
+            });
+        }
+    </script>
+
+</body>
+
+</html>

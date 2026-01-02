@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Hamburgueria 2.0 - O melhor sabor da cidade">
+    <title>Hamburgueria 2.0</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700&family=Playfair+Display:ital,wght@0,700;1,700&display=swap"
+        rel="stylesheet">
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+
+<body>
+    <div id="app">
+        <header class="header">
+            <nav class="navbar">
+                <div class="logo">
+                    <h1>Burger<span class="highlight">2.0</span></h1>
+                </div>
+                <ul class="nav-links">
+                    <li><a href="index.html">Início</a></li>
+                    <li><a href="menu.html">Cardápio</a></li>
+                    <li><a href="about.html">Sobre</a></li>
+                    <li><a href="contact.html">Contato</a></li>
+                </ul>
+                <div class="auth-buttons" style="display: flex; align-items: center; gap: 15px;">
+                    <a href="login.html" id="login-btn" class="btn-text" style="text-decoration:none;">Entrar</a>
+                    <span id="user-display" class="user-display" style="display: none; color: var(--primary);"></span>
+                    <a href="orders.html" id="my-orders-btn" class="btn-text"
+                        style="display: none; font-size: 0.9rem; text-decoration: none;"><i
+                            class="fa-solid fa-receipt"></i> Meus Pedidos</a>
+                    <button id="logout-btn" class="btn-text" style="display: none;"><i
+                            class="fa-solid fa-right-from-bracket"></i></button>
+                </div>
+            </nav>
+        </header>
+
+        <main>
+            <section class="hero" id="home">
+                <div class="hero-content">
+                    <h2>Sabor que <br><span class="highlight">Desafia a Gravidade</span></h2>
+                    <p>Experimente o artesanal no seu nível máximo.</p>
+                    <div class="hero-buttons">
+                        <a href="menu.html" class="btn-primary">Ver Cardápio</a>
+                        <a href="https://www.ifood.com.br" target="_blank" class="btn-primary btn-ifood">
+                            Pedir no iFood <i class="fa-solid fa-motorcycle"></i>
+                        </a>
+                    </div>
+                </div>
+            </section>
+
+            <section id="menu-preview" class="section">
+                <div class="container">
+                    <div class="section-header">
+                        <h3>Destaques</h3>
+                        <p>Um gostinho do que você vai encontrar.</p>
+                    </div>
+                    <!-- Slight change: we will just show a button or a few items, but for now let's keep it simple or just remove the grid if the user wants strictly a separate page. 
+                         For a premium site, usually the home has a "highlights" section. 
+                         I'll redirect the grid to render only highlights or just a link. 
+                         Let's keep the grid container but maybe script will fill it?
+                         The script fills .menu-grid. If I keep .menu-grid here, it will fill with ALL items.
+                         Maybe unrelated but I should rename identifiers if I want different behavior.
+                         For now, I'll keep it as is, so Home also has the menu, but the LINK goes to menu.html.
+                         User asked: "adicione uma pagina so para cardapio".
+                         So Home probably shouldn't show the FULL menu, or maybe just highlights.
+                         I'll keep it simple: Home has the full menu section for now (as scrollable), but the link "Cardápio" goes to the separate page.
+                    -->
+                    <div class="menu-grid">
+                        <!-- Items injected via JS -->
+                    </div>
+                    <div style="text-align: center; margin-top: 2rem;">
+                        <a href="menu.html" class="btn-text">Ver Cardápio Completo &rarr;</a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Removing Auth Modal below -->
+
+
+            <section id="about" class="section about-section">
+                <div class="container">
+                    <div class="about-content">
+                        <div class="about-text">
+                            <h3>Sobre Nós</h3>
+                            <p>Nascemos da paixão por fazer o hambúrguer perfeito. Sem atalhos, apenas ingredientes
+                                frescos e muito amor pelo que fazemos.</p>
+                            <p>Cada blend é moído na hora, cada molho é feito na casa. Venha conhecer o verdadeiro sabor
+                                artesanal.</p>
+                        </div>
+                        <div class="about-stats">
+                            <div class="stat">
+                                <span class="number">5k+</span>
+                                <span class="label">Clientes Felizes</span>
+                            </div>
+                            <div class="stat">
+                                <span class="number">10+</span>
+                                <span class="label">Tipos de Burgers</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="contact" class="section contact-section">
+                <div class="container">
+                    <div class="section-header">
+                        <h3>Onde Estamos</h3>
+                        <p>Venha nos visitar ou peça no delivery.</p>
+                    </div>
+                    <div class="contact-grid">
+                        <div class="contact-card">
+                            <i class="fa-solid fa-location-dot"></i>
+                            <h4>Endereço</h4>
+                            <p>Rua do Sabor, 123 - Centro</p>
+                        </div>
+                        <div class="contact-card">
+                            <i class="fa-brands fa-whatsapp"></i>
+                            <h4>Delivery</h4>
+                            <p>(11) 99999-9999</p>
+                            <a href="#" class="btn-text">Chamar no Whats</a>
+                        </div>
+                        <div class="contact-card">
+                            <i class="fa-regular fa-clock"></i>
+                            <h4>Horários</h4>
+                            <p>Ter a Dom: 18h às 23h</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>&copy; 2024 Hamburgueria 2.0. Todos os direitos reservados.</p>
+        </footer>
+
+        <!-- Cart Modal -->
+        <div id="cart-modal" class="cart-overlay">
+            <div class="cart-container">
+                <div class="cart-header">
+                    <h3>Seu Pedido</h3>
+                    <button id="close-cart-btn"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <div class="cart-items" id="cart-items">
+                    <!-- Items will be injected here via JS -->
+                    <p class="empty-cart-msg">Seu carrinho está vazio.</p>
+                </div>
+                <div class="cart-footer">
+                    <div class="cart-total">
+                        <span>Total:</span>
+                        <span id="cart-total-price">R$ 0,00</span>
+                    </div>
+                    <button id="checkout-btn" class="btn-primary">Finalizar Pedido <i
+                            class="fa-solid fa-check"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Float Button for Cart -->
+        <button id="cart-btn" class="cart-float-btn">
+            <i class="fa-solid fa-bag-shopping"></i>
+            <span id="cart-count" class="cart-count">0</span>
+        </button>
+
+        <!-- Auth Modal -->
+        <div id="auth-modal" class="auth-overlay">
+            <div class="auth-container">
+                <button id="close-auth-btn" class="close-modal-btn"><i class="fa-solid fa-xmark"></i></button>
+
+                <!-- Login Form -->
+                <div id="login-form" class="auth-form active">
+                    <h3>Bem-vindo de volta!</h3>
+                    <p>Faça login para continuar.</p>
+                    <form onsubmit="event.preventDefault(); window.handleLogin();">
+                        <div class="input-group">
+                            <i class="fa-solid fa-envelope"></i>
+                            <input type="email" id="login-email" placeholder="Seu e-mail" required>
+                        </div>
+                        <div class="input-group">
+                            <i class="fa-solid fa-lock"></i>
+                            <input type="password" id="login-password" placeholder="Sua senha" required>
+                        </div>
+                        <button type="submit" class="btn-primary full-width">Entrar</button>
+                    </form>
+                    <p class="auth-switch">
+                        Não tem conta? <a href="#" id="switch-to-register">Cadastre-se</a>
+                    </p>
+                </div>
+
+                <!-- Register Form -->
+                <div id="register-form" class="auth-form">
+                    <h3>Crie sua conta</h3>
+                    <p>Junte-se a nós para ofertas exclusivas.</p>
+                    <form onsubmit="event.preventDefault(); window.handleRegister();">
+                        <div class="input-group">
+                            <i class="fa-solid fa-user"></i>
+                            <input type="text" id="register-name" placeholder="Seu nome completo" required>
+                        </div>
+                        <div class="input-group">
+                            <i class="fa-solid fa-envelope"></i>
+                            <input type="email" id="register-email" placeholder="Seu melhor e-mail" required>
+                        </div>
+                        <div class="input-group">
+                            <i class="fa-solid fa-lock"></i>
+                            <input type="password" id="register-password" placeholder="Uma senha segura" required>
+                        </div>
+                        <button type="submit" class="btn-primary full-width">Cadastrar</button>
+                    </form>
+                    <p class="auth-switch">
+                        Já tem conta? <a href="#" id="switch-to-login">Entrar</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/js/script.js"></script>
+</body>
+
+</html>

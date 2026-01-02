@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Login - Hamburgueria 2.0">
+    <title>Entrar - Hamburgueria 2.0</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700&family=Playfair+Display:ital,wght@0,700;1,700&display=swap"
+        rel="stylesheet">
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Styles -->
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <style>
+        .auth-page-container {
+            min-height: calc(100vh - 80px - 80px);
+            /* Adjust for header/footer */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .auth-card {
+            background: var(--card-bg);
+            padding: 2.5rem;
+            border-radius: var(--border-radius);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            width: 100%;
+            max-width: 450px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .auth-tabs {
+            display: flex;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .auth-tab {
+            flex: 1;
+            text-align: center;
+            padding: 1rem;
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--text-muted);
+            transition: all 0.3s;
+        }
+
+        .auth-tab.active {
+            color: var(--primary);
+            border-bottom: 2px solid var(--primary);
+            margin-bottom: -2px;
+        }
+
+        .auth-form-view {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .auth-form-view.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <header class="header">
+            <nav class="navbar">
+                <div class="logo">
+                    <a href="index.html" style="text-decoration:none;">
+                        <h1>Burger<span class="highlight">2.0</span></h1>
+                    </a>
+                </div>
+                <ul class="nav-links">
+                    <li><a href="index.html">Início</a></li>
+                    <li><a href="menu.html">Cardápio</a></li>
+                    <li><a href="about.html">Sobre</a></li>
+                    <li><a href="contact.html">Contato</a></li>
+                </ul>
+                <div class="auth-buttons" style="display: flex; align-items: center; gap: 15px;">
+                    <a href="login.html" id="login-btn" class="btn-text"
+                        style="text-decoration:none; display: none;">Entrar</a>
+                    <span id="user-display" class="user-display" style="display: none; color: var(--primary);"></span>
+                    <a href="orders.html" id="my-orders-btn" class="btn-text"
+                        style="display: none; font-size: 0.9rem; text-decoration: none;"><i
+                            class="fa-solid fa-receipt"></i> Meus Pedidos</a>
+                    <button id="logout-btn" class="btn-text" style="display: none;"><i
+                            class="fa-solid fa-right-from-bracket"></i></button>
+                    <!-- Cart Indicator in Header for Desktop -->
+                    <div id="header-cart-indicator"
+                        style="color: var(--primary); font-weight: bold; margin-left:10px; display:none;">
+                        <i class="fa-solid fa-cart-shopping"></i> <span id="header-cart-count">0</span>
+                    </div>
+                </div>
+            </nav>
+        </header>
+
+        <main style="padding-top: 80px;">
+            <section class="auth-page-container">
+                <div class="auth-card">
+                    <div class="auth-tabs">
+                        <div class="auth-tab active" onclick="switchAuthTab('login')">Login</div>
+                        <div class="auth-tab" onclick="switchAuthTab('register')">Cadastro</div>
+                    </div>
+
+                    <!-- Login View -->
+                    <div id="login-view" class="auth-form-view active">
+                        <h3 style="text-align: center; margin-bottom: 1rem;">Bem-vindo de volta!</h3>
+                        <form id="login-form" class="auth-form active" onsubmit="handleLogin(event)">
+                            <div class="input-group">
+                                <i class="fas fa-envelope"></i>
+                                <input type="email" id="login-email" placeholder="Seu email" required>
+                            </div>
+                            <div class="input-group">
+                                <i class="fas fa-lock"></i>
+                                <input type="password" id="login-password" placeholder="Sua senha" required>
+                            </div>
+                            <button type="submit" class="btn-primary full-width">Entrar</button>
+                        </form>
+                        <p class="auth-switch" style="text-align: center; margin-top: 1rem;">
+                            Esqueceu a senha? <a href="#">Recuperar</a>
+                        </p>
+                    </div>
+
+                    <!-- Register View -->
+                    <div id="register-view" class="auth-form-view">
+                        <h3 style="text-align: center; margin-bottom: 1rem;">Crie sua conta</h3>
+                        <form id="register-form" class="auth-form" onsubmit="handleRegister(event)">
+                            <div class="input-group">
+                                <i class="fa-solid fa-user"></i>
+                                <input type="text" id="register-name" placeholder="Seu nome completo" required>
+                            </div>
+                            <div class="input-group">
+                                <i class="fa-solid fa-envelope"></i>
+                                <input type="email" id="register-email" placeholder="Seu melhor e-mail" required>
+                            </div>
+                            <div class="input-group">
+                                <i class="fa-solid fa-lock"></i>
+                                <input type="password" id="register-password" placeholder="Uma senha segura" required>
+                            </div>
+                            <button type="submit" class="btn-primary full-width">Cadastrar</button>
+                        </form>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>&copy; 2024 Hamburgueria 2.0. Todos os direitos reservados.</p>
+        </footer>
+    </div>
+
+    <!-- Inline script for simple tab switching before main script loads or helping it -->
+    <script>
+        function switchAuthTab(tab) {
+            // Remove active from all tabs, views, AND forms
+            document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.auth-form-view').forEach(v => v.classList.remove('active'));
+            document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
+
+            if (tab === 'login') {
+                document.querySelector('.auth-tab:first-child').classList.add('active');
+                document.getElementById('login-view').classList.add('active');
+                document.getElementById('login-form').classList.add('active'); // Explicitly show form
+            } else {
+                document.querySelector('.auth-tab:last-child').classList.add('active');
+                document.getElementById('register-view').classList.add('active');
+                document.getElementById('register-form').classList.add('active'); // Explicitly show form
+            }
+        }
+    </script>
+    <script src="assets/js/script.js"></script>
+</body>
+
+</html>

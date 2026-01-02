@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finalizar Pedido - Hamburgueria 2.0</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700&family=Playfair+Display:ital,wght@0,700;1,700&display=swap"
+        rel="stylesheet">
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Styles -->
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <link rel="stylesheet" href="assets/css/auth.css"> <!-- Reusing form styles -->
+    <style>
+        .checkout-container {
+            padding: 120px 2rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 2rem;
+        }
+
+        .checkout-section {
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 0.5rem;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 0.8rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: white;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .form-group.full {
+            grid-column: span 2;
+        }
+
+        .payment-options {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .payment-option {
+            flex: 1;
+            padding: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .payment-option.active {
+            border-color: var(--primary);
+            background: rgba(251, 133, 0, 0.1);
+        }
+
+        .payment-details {
+            display: none;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .payment-details.active {
+            display: block;
+        }
+
+        .order-summary-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .summary-total {
+            font-size: 1.2rem;
+            font-weight: 700;
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1rem;
+            color: var(--primary);
+        }
+
+        @media (max-width: 768px) {
+            .checkout-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header class="header">
+        <nav class="navbar">
+            <div class="logo">
+                <a href="index.html" style="text-decoration:none;">
+                    <h1>Burger<span class="highlight">2.0</span></h1>
+                </a>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html">Início</a></li>
+                <li><a href="menu.html">Cardápio</a></li>
+                <li><a href="about.html">Sobre</a></li>
+                <li><a href="contact.html">Contato</a></li>
+            </ul>
+            <div class="auth-buttons" style="display: flex; align-items: center; gap: 15px;">
+                <a href="login.html" id="login-btn" class="btn-text" style="text-decoration:none;">Entrar</a>
+                <span id="user-display" class="user-display" style="display: none; color: var(--primary);"></span>
+                <a href="orders.html" id="my-orders-btn" class="btn-text"
+                    style="display: none; font-size: 0.9rem; text-decoration: none;"><i class="fa-solid fa-receipt"></i>
+                    Meus Pedidos</a>
+                <button id="logout-btn" class="btn-text" style="display: none;"><i
+                        class="fa-solid fa-right-from-bracket"></i></button>
+                <!-- Cart Indicator in Header for Desktop -->
+                <div id="header-cart-indicator"
+                    style="color: var(--primary); font-weight: bold; margin-left:10px; display:none;">
+                    <i class="fa-solid fa-cart-shopping"></i> <span id="header-cart-count">0</span>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="checkout-container">
+        <!-- Forms Column -->
+        <div class="checkout-forms">
+            <!-- Delivery Address -->
+            <section class="checkout-section">
+                <h2 class="section-title"><i class="fa-solid fa-location-dot"></i> Endereço de Entrega</h2>
+                <form id="address-form">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>CEP</label>
+                            <input type="text" id="cep" placeholder="00000-000" maxlength="9">
+                        </div>
+                        <div class="form-group">
+                            <label>Bairro</label>
+                            <input type="text" id="bairro" placeholder="Seu Bairro">
+                        </div>
+                        <div class="form-group full">
+                            <label>Rua/Avenida</label>
+                            <input type="text" id="rua" placeholder="Nome da Rua">
+                        </div>
+                        <div class="form-group">
+                            <label>Número</label>
+                            <input type="text" id="numero" placeholder="123">
+                        </div>
+                        <div class="form-group">
+                            <label>Complemento</label>
+                            <input type="text" id="complemento" placeholder="Apto, Bloco...">
+                        </div>
+                    </div>
+                </form>
+            </section>
+
+            <!-- Payment -->
+            <section class="checkout-section">
+                <h2 class="section-title"><i class="fa-regular fa-credit-card"></i> Pagamento</h2>
+
+                <div class="payment-options">
+                    <div class="payment-option active" onclick="selectPayment('credit')">
+                        <i class="fa-solid fa-credit-card"></i> Cartão
+                    </div>
+                    <div class="payment-option" onclick="selectPayment('pix')">
+                        <i class="fa-brands fa-pix"></i> Pix
+                    </div>
+                </div>
+
+                <div id="payment-credit" class="payment-details active">
+                    <div class="form-grid">
+                        <div class="form-group full">
+                            <label>Número do Cartão</label>
+                            <input type="text" placeholder="0000 0000 0000 0000">
+                        </div>
+                        <div class="form-group">
+                            <label>Validade</label>
+                            <input type="text" placeholder="MM/AA">
+                        </div>
+                        <div class="form-group">
+                            <label>CVV</label>
+                            <input type="text" placeholder="123">
+                        </div>
+                        <div class="form-group full">
+                            <label>Nome no Cartão</label>
+                            <input type="text" placeholder="Nome como está no cartão">
+                        </div>
+                    </div>
+                </div>
+
+                <div id="payment-pix" class="payment-details">
+                    <div style="text-align: center;">
+                        <!-- Dynamic QR Code Container -->
+                        <div id="qrcode-container"
+                            style="display: flex; justify-content: center; margin-bottom: 1rem; padding: 10px; background: white; border-radius: 8px; width: fit-content; margin-left: auto; margin-right: auto;">
+                        </div>
+
+                        <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1rem;">QR Code Original
+                            (Sem valor definido)</p>
+
+                        <div style="display: flex; gap: 0.5rem;">
+                            <input type="text" id="pix-code"
+                                value="00020126360014BR.GOV.BCB.PIX0114+5511999999995204000053039865802BR5912Hamburgueria6009Sao Paulo62070503***63049F60"
+                                readonly
+                                style="flex: 1; padding: 0.5rem; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; color: #fff; font-size: 0.8rem;">
+                            <button class="btn-primary" style="padding: 0.5rem 1rem;"
+                                onclick="copyPix()">Copiar</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Order Summary Column -->
+        <aside>
+            <div class="checkout-section sticky">
+                <h2 class="section-title">Resumo do Pedido</h2>
+                <div id="checkout-items">
+                    <!-- Items injected via JS -->
+                </div>
+
+                <div class="summary-total">
+                    <span>Total a Pagar</span>
+                    <span id="checkout-total">R$ 0,00</span>
+                </div>
+
+                <button class="btn-primary full-width" style="margin-top: 2rem;" onclick="finalizeOrder()">
+                    Confirmar Pedido <i class="fa-solid fa-check"></i>
+                </button>
+            </div>
+        </aside>
+    </main>
+
+    <script src="assets/js/script.js"></script>
+    <!-- QR Code Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+    <script>
+        // Specific logic for Checkout Page
+        document.addEventListener('DOMContentLoaded', () => {
+            renderCheckoutItems();
+            generateQRCode();
+        });
+
+        function selectPayment(method) {
+            document.querySelectorAll('.payment-option').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.payment-details').forEach(el => el.classList.remove('active'));
+
+            if (method === 'credit') {
+                document.querySelector('.payment-option:first-child').classList.add('active');
+                document.getElementById('payment-credit').classList.add('active');
+            } else {
+                document.querySelector('.payment-option:last-child').classList.add('active');
+                document.getElementById('payment-pix').classList.add('active');
+            }
+        }
+
+        function generateQRCode() {
+            // Static Pix String (No Value)
+            const pixCode = "00020126360014BR.GOV.BCB.PIX0114+5511999999995204000053039865802BR5912Hamburgueria6009Sao Paulo62070503***63049F60";
+
+            const container = document.getElementById("qrcode-container");
+            if (container) {
+                container.innerHTML = ""; // Clear existing
+                new QRCode(container, {
+                    text: pixCode,
+                    width: 180,
+                    height: 180,
+                    colorDark: "#000000",
+                    colorLight: "#ffffff",
+                    correctLevel: QRCode.CorrectLevel.H
+                });
+            }
+        }
+
+        function renderCheckoutItems() {
+            // Read from Shared Cart (which should be in localStorage now)
+            // Note: We need to update script.js to Ensure cart is persistent.
+            const cartData = JSON.parse(localStorage.getItem('cart')) || [];
+            const container = document.getElementById('checkout-items');
+            const totalEl = document.getElementById('checkout-total');
+
+            if (!container) return;
+
+            container.innerHTML = '';
+            let total = 0;
+
+            cartData.forEach(item => {
+                const itemTotal = item.price * item.quantity;
+                total += itemTotal;
+                container.innerHTML += `
+                    <div class="order-summary-item">
+                        <div>
+                            <div style="font-weight: 500;">${item.name}</div>
+                            <div style="font-size: 0.8rem; color: var(--text-muted);">Qtd: ${item.quantity}</div>
+                        </div>
+                        <div style="font-weight: 600;">R$ ${itemTotal.toFixed(2).replace('.', ',')}</div>
+                    </div>
+                `;
+            });
+
+            const deliveryFee = 5.00; // Fixed delivery fee for now
+            const finalTotal = total + deliveryFee;
+
+            container.innerHTML += `
+                <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(255, 255, 255, 0.1);">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; color: var(--text-muted);">
+                        <span>Subtotal</span>
+                        <span>R$ ${total.toFixed(2).replace('.', ',')}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; color: var(--text-muted);">
+                        <span>Taxa de Entrega</span>
+                        <span>R$ ${deliveryFee.toFixed(2).replace('.', ',')}</span>
+                    </div>
+                </div>
+            `;
+
+            totalEl.innerHTML = `
+                <div style="font-size: 0.9rem; font-weight: 400; color: var(--text-muted);">Total</div>
+                R$ ${finalTotal.toFixed(2).replace('.', ',')}
+            `;
+
+            // Update Button Text with Total
+            const confirmBtn = document.querySelector('.btn-primary.full-width');
+            if (confirmBtn) confirmBtn.innerHTML = `Pagar R$ ${finalTotal.toFixed(2).replace('.', ',')} <i class="fa-solid fa-check"></i>`;
+        }
+
+        function finalizeOrder() {
+            // Basic Validation
+            const cep = document.getElementById('cep').value;
+            const rua = document.getElementById('rua').value;
+
+            if (!cep || !rua) {
+                alert("Por favor, preencha o endereço de entrega.");
+                return;
+            }
+
+            // Get Cart & Total
+            const cartData = JSON.parse(localStorage.getItem('cart')) || [];
+            if (cartData.length === 0) {
+                alert("Seu carrinho está vazio!");
+                return;
+            }
+
+            const subtotal = cartData.reduce((acc, item) => acc + (item.price * item.quantity), 0);
+            const deliveryFee = 5.00;
+            const total = subtotal + deliveryFee;
+
+            // Get User Info
+            const user = JSON.parse(localStorage.getItem('user'));
+            const customerObj = user ? { name: user.name, email: user.email } : { name: "Convidado", email: "" };
+
+            // Create Order Object
+            const newOrder = {
+                id: Date.now().toString(), // Ensure string for consistency
+                customer: customerObj,
+                date: new Date().toLocaleDateString('pt-BR'),
+                time: new Date().toLocaleTimeString('pt-BR'),
+                total: total,
+                status: 'Pendente',
+                items: cartData,
+                address: `${rua}, ${document.getElementById('numero').value} - ${document.getElementById('bairro').value}`
+            };
+
+            // Save to LocalStorage
+            const orders = JSON.parse(localStorage.getItem('orders')) || [];
+            orders.push(newOrder); // Add to end (Chronological)
+            localStorage.setItem('orders', JSON.stringify(orders));
+
+            // Simulate Success
+            alert("Pedido Confirmado! Obrigado pela preferência.");
+
+            // Clear Cart Logic
+            localStorage.setItem('cart', '[]');
+
+            // Redirect Home
+            window.location.href = 'index.html';
+        }
+
+        function copyPix() {
+            const copyText = document.getElementById("pix-code");
+            copyText.select();
+            copyText.setSelectionRange(0, 99999); // Mobile
+            navigator.clipboard.writeText(copyText.value);
+            alert("Código Pix copiado!");
+        }
+    </script>
+</body>
+
+</html>
