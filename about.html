@@ -27,24 +27,30 @@
                         <h1>Burger<span class="highlight">2.0</span></h1>
                     </a>
                 </div>
-                <ul class="nav-links">
-                    <li><a href="index.html">Início</a></li>
-                    <li><a href="menu.html">Cardápio</a></li>
-                    <li><a href="about.html" class="active">Sobre</a></li>
-                    <li><a href="contact.html">Contato</a></li>
-                </ul>
-                <div class="auth-buttons" style="display: flex; align-items: center; gap: 15px;">
-                    <a href="login.html" id="login-btn" class="btn-text" style="text-decoration:none;">Entrar</a>
-                    <span id="user-display" class="user-display" style="display: none; color: var(--primary);"></span>
-                    <a href="orders.html" id="my-orders-btn" class="btn-text"
-                        style="display: none; font-size: 0.9rem; text-decoration: none;"><i
-                            class="fa-solid fa-receipt"></i> Meus Pedidos</a>
-                    <button id="logout-btn" class="btn-text" style="display: none;"><i
-                            class="fa-solid fa-right-from-bracket"></i></button>
-                    <!-- Cart Indicator in Header for Desktop -->
-                    <div id="header-cart-indicator"
-                        style="color: var(--primary); font-weight: bold; margin-left:10px; display:none;">
-                        <i class="fa-solid fa-cart-shopping"></i> <span id="header-cart-count">0</span>
+                <button class="menu-toggle" id="mobile-menu-btn">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+                <div class="navbar-content" id="navbar-content">
+                    <ul class="nav-links">
+                        <li><a href="index.html">Início</a></li>
+                        <li><a href="menu.html">Cardápio</a></li>
+                        <li><a href="about.html" class="active">Sobre</a></li>
+                        <li><a href="contact.html">Contato</a></li>
+                    </ul>
+                    <div class="auth-buttons" style="display: flex; align-items: center; gap: 15px;">
+                        <a href="login.html" id="login-btn" class="btn-text" style="text-decoration:none;">Entrar</a>
+                        <span id="user-display" class="user-display"
+                            style="display: none; color: var(--primary);"></span>
+                        <a href="orders.html" id="my-orders-btn" class="btn-text"
+                            style="display: none; font-size: 0.9rem; text-decoration: none;"><i
+                                class="fa-solid fa-receipt"></i> Meus Pedidos</a>
+                        <button id="logout-btn" class="btn-text" style="display: none;"><i
+                                class="fa-solid fa-right-from-bracket"></i></button>
+                        <!-- Cart Indicator in Header for Desktop -->
+                        <div id="header-cart-indicator"
+                            style="color: var(--primary); font-weight: bold; margin-left:10px; display:none;">
+                            <i class="fa-solid fa-cart-shopping"></i> <span id="header-cart-count">0</span>
+                        </div>
                     </div>
                 </div>
             </nav>

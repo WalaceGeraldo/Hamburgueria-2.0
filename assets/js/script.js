@@ -200,6 +200,26 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     checkAuth();
+
+    // Mobile Menu Toggle
+    const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+    const navbarContent = document.getElementById('navbar-content');
+
+    if (mobileMenuBtn && navbarContent) {
+        mobileMenuBtn.addEventListener('click', () => {
+            navbarContent.classList.toggle('active');
+
+            // Toggle Icon
+            const icon = mobileMenuBtn.querySelector('i');
+            if (navbarContent.classList.contains('active')) {
+                icon.classList.remove('fa-bars');
+                icon.classList.add('fa-xmark');
+            } else {
+                icon.classList.remove('fa-xmark');
+                icon.classList.add('fa-bars');
+            }
+        });
+    }
 });
 
 // Render Menu
